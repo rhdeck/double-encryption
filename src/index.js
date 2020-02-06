@@ -1,10 +1,19 @@
 import { randomBytes } from "crypto";
-import { Encoder, Decoder } from "stream-crypto";
+import { Encoder, Decoder } from "@raydeck/stream-crypto";
 import { promisify } from "util";
 class Manager {
   constructor(clientKey, encryptedKey) {
     this.clientKey = clientKey;
     this.encryptedKey = encryptedKey;
+  }
+  toObj() {
+    return {
+      clientKey: this.clientKey,
+      encryptedKey: this.encryptedKey
+    };
+  }
+  toString() {
+    return JSON.stringify(thid.toObj());
   }
   async encryptText(text) {
     const key = await this.getEncryptionKey();
@@ -25,7 +34,7 @@ class Manager {
   async getEncryptionKey() {
     if (this.encryptionKey) return this.encryptionKey;
     const { clientKey, encryptedKey } = this.properties;
-    if (!clientKey || !encryptedKey) return null;
+    if (!clientKey || !encryptedKey) throw "No key stored";
     const clientKeyBuffer = Buffer.from(clientKey, "base64");
     const encryptedKeyBuffer = Buffer.from(encryptedKey, "base64");
     const encryptionKey = await Decoder.decryptBuffer(
@@ -35,35 +44,32 @@ class Manager {
     return (this.encryptionKey = encryptionKey);
   }
   async setKey(newKey) {
-    if (typeof newKey === "undefined") {
-      const buf = await promisify(randomBytes)(32);
-      if (buf) newKey = buf;
-      else throw "Could not create default key";
-    } else if (typeof newKey == "string")
-      newKey = Buffer.from(newKey, "base64");
+    if (!newKey) throw "requires a an argument";
+    if (typeof newKey == "string") newKey = Buffer.from(newKey, "base64");
     const encryptionKey = await this.getEncryptionKey();
-    if (!encryptionKey) {
-      const newEncryptionKey = await promisify(randomBytes)(32);
-      const newEncryptedKey = await Encoder.encrypt(newEncryptionKey, newKey);
-      const newEncryptionKey64 = newEncryptedKey.toString("base64");
-      const newKey64 = newKey.toString("base64");
-      return {
-        clientKey: newKey64,
-        encryptedKey: newEncryptionKey64
-      };
-    } else {
-      //Need to re-encrypt
-      const newEncryptedKey = await Decoder.encryptBuffer(
-        encryptionKey,
-        newKey
-      );
-      const newEncryptionKey64 = newEncryptedKey.toString("base64");
-      const newKey64 = newKey.toString("base64");
-      return {
-        clientKey: newKey64,
-        encryptedKey: newEncryptionKey64
-      };
-    }
+    if (!encryptionKey) throw "there is no stored key";
+    //Need to re-encrypt
+    const newEncryptedKey = await Decoder.encryptBuffer(encryptionKey, newKey);
+    const newEncryptionKey64 = newEncryptedKey.toString("base64");
+    const newKey64 = newKey.toString("base64");
+    this.clientKey = newKey64;
+    this.encryptedKey = newEncryptionKey64;
   }
+}
+
+Manager.create = async (length = 32) => {
+  const toEncrypt = await makeRandomKeyBuffer(length);
+  const clientKey = await makeRandomKeyBuffer(length);
+  const encryptedKey = Encoder.encrypt(toEncrypt, clientKey);
+  return new Manager(clientKey, encryptedKey);
+};
+Manager.makeRandomKey = makeRandomKey;
+Manager.makeRandomKeyBuffer = makeRandomKeyBuffer;
+async function makeRandomKeyBuffer(length = 32) {
+  return promisify(randomBytes)(length);
+}
+async function makeRandomKey(length = 32) {
+  const buf = await makeRandomKeyBuffer(length);
+  return buf.toString("base64");
 }
 export default Manager;
