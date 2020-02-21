@@ -50,17 +50,17 @@ class Manager {
     if (!encryptionKey) throw "there is no stored key";
     //Need to re-encrypt
     const newEncryptedKey = await Decoder.encryptBuffer(encryptionKey, newKey);
-    const newEncryptionKey64 = newEncryptedKey.toString("base64");
+    const newEncryptedKey64 = newEncryptedKey.toString("base64");
     const newKey64 = newKey.toString("base64");
     this.clientKey = newKey64;
-    this.encryptedKey = newEncryptionKey64;
+    this.encryptedKey = newEncryptedKey64;
   }
 }
 
 Manager.create = async (length = 32) => {
   const toEncrypt = await makeRandomKeyBuffer(length);
   const clientKey = await makeRandomKeyBuffer(length);
-  const encryptedKey = Encoder.encrypt(toEncrypt, clientKey);
+  const encryptedKey = await Encoder.encrypt(toEncrypt, clientKey);
   return new Manager(clientKey, encryptedKey);
 };
 Manager.makeRandomKey = makeRandomKey;
