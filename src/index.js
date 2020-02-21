@@ -33,7 +33,7 @@ class Manager {
   }
   async getEncryptionKey() {
     if (this.encryptionKey) return this.encryptionKey;
-    const { clientKey, encryptedKey } = this.properties;
+    const { clientKey, encryptedKey } = this.toObj();
     if (!clientKey || !encryptedKey) throw "No key stored";
     const clientKeyBuffer = Buffer.from(clientKey, "base64");
     const encryptedKeyBuffer = Buffer.from(encryptedKey, "base64");
