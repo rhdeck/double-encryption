@@ -19,9 +19,9 @@ class Manager {
     const key = await this.getEncryptionKey();
     return await Encoder.encrypt(text, key);
   }
-  async decryptText(text) {
+  async decryptText(buffer) {
     const key = await this.getEncryptionKey();
-    return await Decoder.decryptText(text, key);
+    return await Decoder.decryptText(buffer, key);
   }
   async encryptImage(b) {
     const key = await this.getEncryptionKey();
