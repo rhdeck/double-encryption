@@ -19,9 +19,9 @@ class Manager {
     const key = await this.getEncryptionKey();
     return await Encoder.encrypt(text, key);
   }
-  async decryptText(text) {
+  async decryptText(buffer) {
     const key = await this.getEncryptionKey();
-    return await Decoder.decryptText(text, key);
+    return await Decoder.decryptText(buffer, key);
   }
   async encryptImage(b) {
     const key = await this.getEncryptionKey();
@@ -33,7 +33,7 @@ class Manager {
   }
   async getEncryptionKey() {
     if (this.encryptionKey) return this.encryptionKey;
-    const { clientKey, encryptedKey } = this.properties;
+    const { clientKey, encryptedKey } = this.toObj();
     if (!clientKey || !encryptedKey) throw "No key stored";
     const clientKeyBuffer = Buffer.from(clientKey, "base64");
     const encryptedKeyBuffer = Buffer.from(encryptedKey, "base64");
@@ -50,17 +50,17 @@ class Manager {
     if (!encryptionKey) throw "there is no stored key";
     //Need to re-encrypt
     const newEncryptedKey = await Decoder.encryptBuffer(encryptionKey, newKey);
-    const newEncryptionKey64 = newEncryptedKey.toString("base64");
+    const newEncryptedKey64 = newEncryptedKey.toString("base64");
     const newKey64 = newKey.toString("base64");
     this.clientKey = newKey64;
-    this.encryptedKey = newEncryptionKey64;
+    this.encryptedKey = newEncryptedKey64;
   }
 }
 
 Manager.create = async (length = 32) => {
   const toEncrypt = await makeRandomKeyBuffer(length);
   const clientKey = await makeRandomKeyBuffer(length);
-  const encryptedKey = Encoder.encrypt(toEncrypt, clientKey);
+  const encryptedKey = await Encoder.encrypt(toEncrypt, clientKey);
   return new Manager(clientKey, encryptedKey);
 };
 Manager.makeRandomKey = makeRandomKey;
