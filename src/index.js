@@ -49,7 +49,7 @@ class Manager {
     const encryptionKey = await this.getEncryptionKey();
     if (!encryptionKey) throw "there is no stored key";
     //Need to re-encrypt
-    const newEncryptedKey = await Decoder.encryptBuffer(encryptionKey, newKey);
+    const newEncryptedKey = await Encoder.encrypt(encryptionKey, newKey);
     const newEncryptedKey64 = newEncryptedKey.toString("base64");
     const newKey64 = newKey.toString("base64");
     this.clientKey = newKey64;
