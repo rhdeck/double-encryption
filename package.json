@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
-    "@raydeck/stream-crypto": "^2.0.1"
+    "@raydeck/stream-crypto": "^2.0.5"
   },
   "files": [
     "src",

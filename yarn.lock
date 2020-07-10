@@ -22,10 +22,10 @@
     recursive-copy "^2.0.10"
     untildify "^4.0.0"
 
-"@raydeck/stream-crypto@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@raydeck/stream-crypto/-/stream-crypto-2.0.1.tgz#ee82a0b8f937bd1055e69c6a1a425cd6bf8ec779"
-  integrity sha512-YPg8yqq7DEbwbZGV5rbOF1qyAV70W3izcXtuamcDUcSMnn2XF5mYmswl6t9KqMO7uUfwlXJO7rY1rTpNo3RYdw==
+"@raydeck/stream-crypto@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@raydeck/stream-crypto/-/stream-crypto-2.0.5.tgz#8aff30fc2908180604d88fe84aac295a222feb9d"
+  integrity sha512-AtNZZoO+y+BYPywAeWDu3gE5OimhUp3i53TnwNZF/bOFZgcArGujRvNbCyvJXgCAK3HxWT9MECoemCGsl2VglA==
 
 "@raydeck/wml@^0.0.2":
   version "0.0.2"
