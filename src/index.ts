@@ -1,12 +1,11 @@
-import { randomBytes } from "crypto";
 import {
   encrypt,
-  decryptText,
-  decryptBuffer,
+  decryptToText,
+  decryptToBuffer,
   encryptFile,
   decryptFile,
+  makeRandomKeyBuffer,
 } from "@raydeck/stream-crypto";
-import { promisify } from "util";
 class Manager {
   protected encryptionKey?: string;
   protected clientKey?: string;
@@ -28,9 +27,9 @@ class Manager {
     const key = await this.getEncryptionKey();
     return await encrypt(text, key);
   }
-  async decryptText(buffer: Buffer) {
+  async decryptText(data: any) {
     const key = await this.getEncryptionKey();
-    return await decryptText(buffer, key);
+    return await decryptToText(data, key);
   }
   async encryptImage(b: Buffer) {
     const key = await this.getEncryptionKey();
@@ -38,7 +37,15 @@ class Manager {
   }
   async decryptImage(b: Buffer) {
     const key = await this.getEncryptionKey();
-    return await decryptBuffer(b, key);
+    return await decryptToBuffer(b, key);
+  }
+  async encryptFile(source: string, dest: string) {
+    const key = await this.getEncryptionKey();
+    return await encryptFile(source, dest, key);
+  }
+  async decryptFile(source: string, dest: string) {
+    const key = await this.getEncryptionKey();
+    return await decryptFile(source, dest, key);
   }
   async getEncryptionKey() {
     if (!this.encryptionKey) {
@@ -46,7 +53,7 @@ class Manager {
       if (!clientKey || !encryptedKey) throw "No key stored";
       const clientKeyBuffer = Buffer.from(clientKey, "base64");
       const encryptedKeyBuffer = Buffer.from(encryptedKey, "base64");
-      const encryptionKey = await decryptBuffer(
+      const encryptionKey = await decryptToBuffer(
         encryptedKeyBuffer,
         clientKeyBuffer
       );
@@ -76,12 +83,5 @@ class Manager {
     );
   }
 }
-async function makeRandomKeyBuffer(length = 32): Promise<Buffer> {
-  return promisify(randomBytes)(length);
-}
-async function makeRandomKey(length = 32): Promise<string> {
-  const buf = await makeRandomKeyBuffer(length);
-  return buf.toString("base64");
-}
+
 export default Manager;
-export { makeRandomKey, makeRandomKeyBuffer };
