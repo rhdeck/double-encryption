@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc; yarn pack -f package.tgz",
+    "build": "tsc; typedoc --mode lib --theme minimal && yarn pack -f package.tgz",
     "watch": "node watch",
     "linecount": "wc -l src/*.js | sort",
     "prepublishOnly": "yarn build"
@@ -17,11 +17,12 @@
   "devDependencies": {
     "@raydeck/livelink": "^1.5.2",
     "@types/node": "^14.0.20",
+    "typedoc": "^0.17.0-3",
     "typescript": "^3.9.6"
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
-    "@raydeck/stream-crypto": "^2.0.9"
+    "@raydeck/stream-crypto": "^2.2.2"
   },
   "files": [
     "src",
