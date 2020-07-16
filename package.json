@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc; yarn pack -f package.tgz",
     "watch": "node watch",
-    "linecount": "wc -l src/*.js | sort"
+    "linecount": "wc -l src/*.js | sort",
+    "prepublishOnly": "yarn build"
   },
   "devDependencies": {
     "@raydeck/livelink": "^1.5.2",
@@ -20,7 +21,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
-    "@raydeck/stream-crypto": "^2.0.5"
+    "@raydeck/stream-crypto": "^2.0.9"
   },
   "files": [
     "src",
